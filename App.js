@@ -25,6 +25,70 @@ const icon_09n = require("./assets/weather_icons/09n.png");
 const icon_10 = require("./assets/weather_icons/10.png");
 const icon_11 = require("./assets/weather_icons/11.png");
 
+// Backgrounds
+// Spring Day
+const spring_day_clear = require("./assets/backgrounds/spring_day_clear.png");
+const spring_day_few_clouds = require("./assets/backgrounds/spring_day_few_clouds.png");
+const spring_day_cloudy = require("./assets/backgrounds/spring_day_cloudy.png");
+const spring_day_rain = require("./assets/backgrounds/spring_day_rain.png");
+const spring_day_storm = require("./assets/backgrounds/spring_day_storm.png");
+const spring_day_mist = require("./assets/backgrounds/spring_day_mist.png");
+
+// Spring Night
+const spring_night_clear = require("./assets/backgrounds/spring_night_clear.png");
+const spring_night_few_clouds = require("./assets/backgrounds/spring_night_few_clouds.png");
+const spring_night_cloudy = require("./assets/backgrounds/spring_night_cloudy.png");
+const spring_night_rain = require("./assets/backgrounds/spring_night_rain.png");
+const spring_night_storm = require("./assets/backgrounds/spring_night_storm.png");
+const spring_night_mist = require("./assets/backgrounds/spring_night_mist.png");
+
+// Summer Day
+const summer_day_clear = require("./assets/backgrounds/summer_day_clear.png");
+const summer_day_few_clouds = require("./assets/backgrounds/summer_day_few_clouds.png");
+const summer_day_cloudy = require("./assets/backgrounds/summer_day_cloudy.png");
+const summer_day_rain = require("./assets/backgrounds/summer_day_rain.png");
+const summer_day_storm = require("./assets/backgrounds/summer_day_storm.png");
+const summer_day_mist = require("./assets/backgrounds/summer_day_mist.png");
+
+// Summer Night
+const summer_night_clear = require("./assets/backgrounds/summer_night_clear.png");
+const summer_night_few_clouds = require("./assets/backgrounds/summer_night_few_clouds.png");
+const summer_night_cloudy = require("./assets/backgrounds/summer_night_cloudy.png");
+const summer_night_rain = require("./assets/backgrounds/summer_night_rain.png");
+const summer_night_storm = require("./assets/backgrounds/summer_night_storm.png");
+const summer_night_mist = require("./assets/backgrounds/summer_night_mist.png");
+
+// Autumn Day
+const autumn_day_clear = require("./assets/backgrounds/autumn_day_clear.png");
+const autumn_day_few_clouds = require("./assets/backgrounds/autumn_day_few_clouds.png");
+const autumn_day_cloudy = require("./assets/backgrounds/autumn_day_cloudy.png");
+const autumn_day_rain = require("./assets/backgrounds/autumn_day_rain.png");
+const autumn_day_storm = require("./assets/backgrounds/autumn_day_storm.png");
+const autumn_day_mist = require("./assets/backgrounds/autumn_day_mist.png");
+
+// Autumn Night
+const autumn_night_clear = require("./assets/backgrounds/autumn_night_clear.png");
+const autumn_night_few_clouds = require("./assets/backgrounds/autumn_night_few_clouds.png");
+const autumn_night_cloudy = require("./assets/backgrounds/autumn_night_cloudy.png");
+const autumn_night_rain = require("./assets/backgrounds/autumn_night_rain.png");
+const autumn_night_storm = require("./assets/backgrounds/autumn_night_storm.png");
+const autumn_night_mist = require("./assets/backgrounds/autumn_night_mist.png");
+
+// Winter Day
+const winter_day_clear = require("./assets/backgrounds/winter_day_clear.png");
+const winter_day_few_clouds = require("./assets/backgrounds/winter_day_few_clouds.png");
+const winter_day_cloudy = require("./assets/backgrounds/winter_day_cloudy.png");
+const winter_day_rain = require("./assets/backgrounds/winter_day_rain.png");
+const winter_day_storm = require("./assets/backgrounds/winter_day_storm.png");
+const winter_day_mist = require("./assets/backgrounds/winter_day_mist.png");
+
+// Winter Night
+const winter_night_clear = require("./assets/backgrounds/winter_night_clear.png");
+const winter_night_few_clouds = require("./assets/backgrounds/winter_night_few_clouds.png");
+const winter_night_cloudy = require("./assets/backgrounds/winter_night_cloudy.png");
+const winter_night_rain = require("./assets/backgrounds/winter_night_rain.png");
+const winter_night_storm = require("./assets/backgrounds/winter_night_storm.png");
+const winter_night_mist = require("./assets/backgrounds/winter_night_mist.png");
 
 
 const pad = n => n < 10 ? "0" + n : n;
@@ -44,7 +108,7 @@ function getFormattedDate() {
 
 
 function getHour(d) {
-  const date = new Date(d * 1000);  // Uniq Style Time Handling (in secs)
+  const date = new Date(d * 1000);  // Uniqe Style Time Handling (in secs)
   let hour = date.getHours();
   let amPm = "AM";
   if (hour > 12) {
@@ -75,6 +139,112 @@ function getWeatherIcon(icon) {
     case "11n": return icon_11;
     default: return icon_00;
   }
+}
+
+
+
+function getBackgroundImage(icon) {
+  const date = new Date();
+  const month = date.getMonth();
+  const seasons = ["winter", "winter", "spring", "spring", "spring", "summer", "summer", "summer", "autumn", "autumn", "autumn", "winter"];
+  const season = seasons[month];
+  const dayTime = icon.match(/n|d/g)[0] === "d" ? "day" : "night";
+  const weatherCode = Number(icon.match(/\d+/g)[0]);
+  const weathers = ["", "clear", "few_clouds", "cloudy", "cloudy", "", "", "", "", "rain", "rain", "storm", "", "mist"];
+  const weather = weathers[weatherCode];
+  
+  if (season === "spring") {
+    if (dayTime === "day") {
+      switch(weather) {
+        case "clear": return spring_day_clear;
+        case "few_clouds": return spring_day_few_clouds;
+        case "cloudy": return spring_day_cloudy;
+        case "rain": return spring_day_rain;
+        case "storm": return spring_day_storm;
+        case "mist": return spring_day_mist;
+      }
+    }
+    if (dayTime === "night") {
+      switch(weather) {
+        case "clear": return spring_night_clear;
+        case "few_clouds": return spring_night_few_clouds;
+        case "cloudy": return spring_night_cloudy;
+        case "rain": return spring_night_rain;
+        case "storm": return spring_night_storm;
+        case "mist": return spring_night_mist;
+      }
+    }
+  }
+
+  if (season === "summer") {
+    if (dayTime === "day") {
+      switch(weather) {
+        case "clear": return summer_day_clear;
+        case "few_clouds": return summer_day_few_clouds;
+        case "cloudy": return summer_day_cloudy;
+        case "rain": return summer_day_rain;
+        case "storm": return summer_day_storm;
+        case "mist": return summer_day_mist;
+      }
+    }
+    if (dayTime === "night") {
+      switch(weather) {
+        case "clear": return summer_night_clear;
+        case "few_clouds": return summer_night_few_clouds;
+        case "cloudy": return summer_night_cloudy;
+        case "rain": return summer_night_rain;
+        case "storm": return summer_night_storm;
+        case "mist": return summer_night_mist;
+      }
+    }
+  }
+
+  if (season === "autumn") {
+    if (dayTime === "day") {
+      switch(weather) {
+        case "clear": return autumn_day_clear;
+        case "few_clouds": return autumn_day_few_clouds;
+        case "cloudy": return autumn_day_cloudy;
+        case "rain": return autumn_day_rain;
+        case "storm": return autumn_day_storm;
+        case "mist": return autumn_day_mist;
+      }
+    }
+    if (dayTime === "night") {
+      switch(weather) {
+        case "clear": return autumn_night_clear;
+        case "few_clouds": return autumn_night_few_clouds;
+        case "cloudy": return autumn_night_cloudy;
+        case "rain": return autumn_night_rain;
+        case "storm": return autumn_night_storm;
+        case "mist": return autumn_night_mist;
+      }
+    }
+  }
+
+  if (season === "winter") {
+    if (dayTime === "day") {
+      switch(weather) {
+        case "clear": return winter_day_clear;
+        case "few_clouds": return winter_day_few_clouds;
+        case "cloudy": return winter_day_cloudy;
+        case "rain": return winter_day_rain;
+        case "storm": return winter_day_storm;
+        case "mist": return winter_day_mist;
+      }
+    }
+    if (dayTime === "night") {
+      switch(weather) {
+        case "clear": return winter_night_clear;
+        case "few_clouds": return winter_night_few_clouds;
+        case "cloudy": return winter_night_cloudy;
+        case "rain": return winter_night_rain;
+        case "storm": return winter_night_storm;
+        case "mist": return winter_night_mist;
+      }
+    }
+  }
+  return spring_day_clear
 }
 
 
@@ -139,8 +309,8 @@ export default function App() {
   ) : data.list ? (
     <SafeAreaView style={ styles.container }>
       <View style = { styles.main }>
-        <ImageBackground 
-          source={ require("./assets/backgrounds/summer_day_clear.png") } 
+        <ImageBackground
+          source={ getBackgroundImage(data.list[0].weather[0].icon) }
           style={ styles.background }
           imageStyle={{ borderRadius: 40 }}
         >
@@ -361,3 +531,102 @@ numberOfLines= { textLines }
         title="Get Dimensions"
         onPress={ () => Alert.alert("Screen Dimensions", dimensionsStrt , [{ "text": "Sod Off!" }, {"text": "Oki Doc"}]) }
       /> */}
+
+
+
+
+
+
+
+
+
+/*
+if (season === "spring") {
+    if (dayTime === "day") {
+      switch(weather) {
+        case "clear": return spring_day_clear;
+        case "few_clouds": return spring_day_few_clouds;
+        case "cloudy": return spring_day_cloudy;
+        case "rain": return spring_day_rain;
+        case "storm": return spring_day_storm;
+        case "mist": return spring_day_mist;
+      }
+      if (dayTime === "night") {
+        switch(weather) {
+          case "clear": return spring_night_clear;
+          case "few_clouds": return spring_night_few_clouds;
+          case "cloudy": return spring_night_cloudy;
+          case "rain": return spring_night_rain;
+          case "storm": return spring_night_storm;
+          case "mist": return spring_night_mist;
+        }
+    }
+  }
+
+  if (season === "summer") {
+    if (dayTime === "day") {
+      switch(weather) {
+        case "clear": return summer_day_clear;
+        case "few_clouds": return summer_day_few_clouds;
+        case "cloudy": return summer_day_cloudy;
+        case "rain": return summer_day_rain;
+        case "storm": return summer_day_storm;
+        case "mist": return summer_day_mist;
+      }
+      if (dayTime === "night") {
+        switch(weather) {
+          case "clear": return summer_night_clear;
+          case "few_clouds": return summer_night_few_clouds;
+          case "cloudy": return summer_night_cloudy;
+          case "rain": return summer_night_rain;
+          case "storm": return summer_night_storm;
+          case "mist": return summer_night_mist;
+        }
+    }
+  }
+
+  if (season === "autumn") {
+    if (dayTime === "day") {
+      switch(weather) {
+        case "clear": return autumn_day_clear;
+        case "few_clouds": return autumn_day_few_clouds;
+        case "cloudy": return autumn_day_cloudy;
+        case "rain": return autumn_day_rain;
+        case "storm": return autumn_day_storm;
+        case "mist": return autumn_day_mist;
+      }
+      if (dayTime === "night") {
+        switch(weather) {
+          case "clear": return autumn_night_clear;
+          case "few_clouds": return autumn_night_few_clouds;
+          case "cloudy": return autumn_night_cloudy;
+          case "rain": return autumn_night_rain;
+          case "storm": return autumn_night_storm;
+          case "mist": return autumn_night_mist;
+        }
+    }
+  }
+
+  if (season === "winter") {
+    if (dayTime === "day") {
+      switch(weather) {
+        case "clear": return winter_day_clear;
+        case "few_clouds": return winter_day_few_clouds;
+        case "cloudy": return winter_day_cloudy;
+        case "rain": return winter_day_rain;
+        case "storm": return winter_day_storm;
+        case "mist": return winter_day_mist;
+      }
+      if (dayTime === "night") {
+        switch(weather) {
+          case "clear": return winter_night_clear;
+          case "few_clouds": return winter_night_few_clouds;
+          case "cloudy": return winter_night_cloudy;
+          case "rain": return winter_night_rain;
+          case "storm": return winter_night_storm;
+          case "mist": return winter_night_mist;
+        }
+    }
+  }
+
+ */
