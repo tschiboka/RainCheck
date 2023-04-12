@@ -7,14 +7,28 @@ import Geocoder from "react-native-geocoding";
 import { REACT_APP_OPENWEATHERMAP_API, REACT_APP_GOOGLE_GEOLOCATION_API } from '@env';
 
 
+
 // Icons
 import { FontAwesome5 } from '@expo/vector-icons'; 
 import { Feather } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { EvilIcons } from '@expo/vector-icons';
+const icon_00 = require("./assets/weather_icons/00.png");
+const icon_01d = require("./assets/weather_icons/01d.png");
+const icon_01n = require("./assets/weather_icons/01n.png");
+const icon_02d = require("./assets/weather_icons/02d.png");
+const icon_02n = require("./assets/weather_icons/02n.png");
+const icon_03d = require("./assets/weather_icons/03d.png");
+const icon_03n = require("./assets/weather_icons/03n.png");
+const icon_09d = require("./assets/weather_icons/09d.png");
+const icon_09n = require("./assets/weather_icons/09n.png");
+const icon_10 = require("./assets/weather_icons/10.png");
+const icon_11 = require("./assets/weather_icons/11.png");
 
+
+
+const pad = n => n < 10 ? "0" + n : n;
 function getFormattedDate() {
-  const pad = n => n < 10 ? "0" + n : n;
   const date = new Date();
   const year = date.getFullYear();
   const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][date.getMonth()];
@@ -29,14 +43,47 @@ function getFormattedDate() {
 
 
 
+function getHour(d) {
+  const date = new Date(d * 1000);  // Uniq Style Time Handling (in secs)
+  let hour = date.getHours();
+  let amPm = "AM";
+  if (hour > 12) {
+    hour = hour - 12;
+    amPm = "PM";
+  }
+
+  return hour + " " + amPm;
+}
+
+
+
+function getWeatherIcon(icon) {
+  switch(icon) {
+    case "01d": return icon_01d;
+    case "01n": return icon_01n;
+    case "02d": return icon_02d;
+    case "02n": return icon_02n;
+    case "03d": return icon_03d;
+    case "03n": return icon_03n;
+    case "04d": return icon_03d;
+    case "04n": return icon_03n;
+    case "09d": return icon_09d;
+    case "09n": return icon_09n;
+    case "10d": return icon_10;
+    case "10n": return icon_10;
+    case "11d": return icon_11;
+    case "11n": return icon_11;
+    default: return icon_00;
+  }
+}
+
+
+
 export default function App() {  
   const [isLoading, setLoading] = useState(true);
   const [location, setLocation] = useState();
   const [locationName, setLocationName] = useState({ country: "England", city: "London", location: "Ealing" });
   const [data, setData] = useState({});
-
-  console.log(REACT_APP_OPENWEATHERMAP_API)
-  console.log(REACT_APP_GOOGLE_GEOLOCATION_API)
 
   
   const fetchData = async () => {
@@ -69,6 +116,21 @@ export default function App() {
   }
   
   useEffect(() => { fetchData(); }, []);
+  if (data.list) {
+    
+    data.list.forEach(d => {
+      const pad = n => n < 10 ? "0" + n : n;
+      const date = new Date(d.dt * 1000);
+      const year = date.getFullYear();
+      const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][date.getMonth()];
+      const day = pad(date.getDate());
+      const dayName = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()];
+      const hour = pad(date.getHours());
+      const min = pad(date.getMinutes());
+      const formattedDate = `${ day }.${ month }.${ year } ${ dayName } ${ hour }:${ min }`;
+    });
+  }
+
   
   return isLoading ? (
     <View style={ styles.app_loading }>
@@ -89,32 +151,56 @@ export default function App() {
       
       <View style = { styles.today__details }>
         <DailyWeatherDetail>
-          <FontAwesome5 name="temperature-high" size={ 20 } color="#555" />
-          <Text>Temperature</Text>
-          <Text style = { { fontSize: 24, color: "#111" } }>{ data.list[0].main.temp }C</Text>
-        </DailyWeatherDetail>
-
-        <DailyWeatherDetail>
           <Feather name="wind" size={24} color="black" />
           <Text>Wind</Text>
           <Text style = { { fontSize: 24, color: "#111" } }>{ data.list[0].wind.speed }</Text>
-          </DailyWeatherDetail>
+        </DailyWeatherDetail>
         
-          <DailyWeatherDetail>
-            <Entypo name="air" size={24} color="black" />
-            <Text>Pressure</Text>
-            <Text style = { { fontSize: 24, color: "#111" } }>{ data.list[0].main.pressure }</Text>
-          </DailyWeatherDetail>
+        <DailyWeatherDetail>
+          <Entypo name="air" size={24} color="black" />
+          <Text>Pressure</Text>
+          <Text style = { { fontSize: 24, color: "#111" } }>{ data.list[0].main.pressure }</Text>
+        </DailyWeatherDetail>
           
-          <DailyWeatherDetail>
-            <Entypo name="water" size={24} color="black" />
-            <Text>Humidity</Text>
-            <Text style = { { fontSize: 24, color: "#111" } }>{ data.list[0].main.humidity }</Text>
-          </DailyWeatherDetail>
+        <DailyWeatherDetail>
+          <Feather name="cloud-rain" size={24} color="black" />
+          <Text>Precipitation</Text>
+          <Text style = { { fontSize: 24, color: "#111" } }>{ data.list[0].rain["3h"] }</Text>
+        </DailyWeatherDetail>
+
+        <DailyWeatherDetail>
+          <Entypo name="water" size={24} color="black" />
+          <Text>Humidity</Text>
+          <Text style = { { fontSize: 24, color: "#111" } }>{ data.list[0].main.humidity }</Text>
+        </DailyWeatherDetail>
         </View>
   
         <View style = { styles.today__hourly }>
-          
+          <View style = { styles.weather_now }>
+            <Text style = { { fontSize: 16, color: "#111" } }>NOW</Text>
+            <Image style = { styles.weatherIcon } source={ getWeatherIcon(data.list[0].weather[0].icon) }></Image>
+            <Text style = { { fontSize: 22, color: "#111" } }>{ data.list[0].main.temp.toFixed(1) }</Text>
+          </View>
+          <View style = { styles.weather_next_hours }>
+            <Text style = { { fontSize: 16, color: "#111" } }>{ getHour(data.list[1].dt) }</Text>
+            <Image style = { styles.weatherIcon } source={ getWeatherIcon(data.list[1].weather[0].icon) }></Image>
+            <Text style = { { fontSize: 18, color: "#111" } }>{ data.list[1].main.temp.toFixed(1) }</Text>
+          </View>  
+          <View style = { styles.weather_next_hours }>
+            <Text style = { { fontSize: 16, color: "#111" } }>{ getHour(data.list[2].dt) }</Text>
+            <Image style = { styles.weatherIcon } source={ getWeatherIcon(data.list[2].weather[0].icon) }></Image>
+            <Text style = { { fontSize: 18, color: "#111" } }>{ data.list[2].main.temp.toFixed(1) }</Text>
+          </View>  
+          <View style = { styles.weather_next_hours }>
+            <Text style = { { fontSize: 16, color: "#111" } }>{ getHour(data.list[3].dt) }</Text>
+            <Image style = { styles.weatherIcon } source={ getWeatherIcon(data.list[3].weather[0].icon) }></Image>
+            <Text style = { { fontSize: 18, color: "#111" } }>{ data.list[3].main.temp.toFixed(1) }</Text>
+          </View>  
+          <View style = { styles.weather_next_hours }>
+            <Text style = { { fontSize: 16, color: "#111" } }>{ getHour(data.list[4].dt) }</Text>
+            <Image style = { styles.weatherIcon } source={ getWeatherIcon(data.list[4].weather[0].icon) }></Image>
+            <Text style = { { fontSize: 18, color: "#111" } }>{ data.list[4].main.temp.toFixed(1) }</Text>
+          </View>  
         </View>
   
         <View style = { styles.navigation }>
@@ -199,13 +285,36 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   today__hourly: {
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
     width: "98%",
     height: "20%",
-    backgroundColor: "#111",
     borderRadius: 20,
     marginBottom: 10,
+  },
+  weather_now: {
+    flexDirection: "column",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    backgroundColor: "#222",
+    width: "19%",
+    height: "100%",
+    borderRadius: 20,
+  },
+  weather_next_hours: {
+    flexDirection: "column",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    backgroundColor: "#111",
+    width: "19%",
+    height: "100%",
+    borderRadius: 20,
+  },
+  weatherIcon: {
+    width: "80%",
+    height: "50%",
+    resizeMode: "contain"
   },
   navigation: {
     alignItems: "center",
