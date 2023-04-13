@@ -1,11 +1,13 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ActivityIndicator, StyleSheet, Text, View, Image, ImageBackground, TouchableWithoutFeedback, Button, Alert, Platform, Dimensions, useWindowDimensions } from 'react-native';
-import DailyWeatherDetail from './components/DailyWeatherDetail';
 import { useEffect, useState } from 'react';
 import * as Location from "expo-location";
 import Geocoder from "react-native-geocoding";
 import { REACT_APP_OPENWEATHERMAP_API, REACT_APP_GOOGLE_GEOLOCATION_API } from '@env';
 
+// Components
+import DailyWeatherDetail from './components/DailyWeatherDetail';
+import HourlyThumbnail from './components/HourlyThumbnail';
 
 
 // Icons
@@ -100,7 +102,7 @@ function getFormattedDate() {
   const dayName = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()];
   const hour = pad(date.getHours());
   const min = pad(date.getMinutes());
-  const formattedDate = `${ day }.${ month }.${ year } ${ dayName } ${ hour }:${ min }`;
+  const formattedDate = `${ day }. ${ month }. ${ year }, ${ dayName }, ${ hour }:${ min }`;
   
   return formattedDate;
 }
@@ -264,6 +266,7 @@ export default function App() {
     // Get Longitude and Latitude
     const { coords: { latitude, longitude } } = await Location.getLastKnownPositionAsync();
     setLocation({ latitude, longitude });
+    console.log(latitude, longitude)
     
     // Get Location Descriptive Text (Country, City...)
     Geocoder.init(REACT_APP_GOOGLE_GEOLOCATION_API);
@@ -315,62 +318,29 @@ export default function App() {
           imageStyle={{ borderRadius: 40 }}
         >
           <Text style = { styles.date }>{ getFormattedDate() }</Text>
-          <Text style = { styles.location }><EvilIcons name="location" size={ 26 } color="#333" />{ locationName.location }, { locationName.city }, { locationName.country }</Text>
+          <Text style = { styles.location }><EvilIcons name="location" size={ 26 } color="#ccc" />
+            { locationName.location }, { locationName.city }, { locationName.country }
+          </Text>
+          <View style={ styles.mainTempBox }>
+            <Text style={ styles.mainTempText }>{ (Math.round(Number(data.list[0].main.temp * 10)) / 10).toFixed(1) }</Text>
+            <Text style={ styles.mainTempMeasurement }>C</Text>
+          </View>
         </ImageBackground>
       </View>
       
       <View style = { styles.today__details }>
-        <DailyWeatherDetail>
-          <Feather name="wind" size={24} color="black" />
-          <Text>Wind</Text>
-          <Text style = { { fontSize: 24, color: "#111" } }>{ data.list[0].wind.speed }</Text>
-        </DailyWeatherDetail>
-        
-        <DailyWeatherDetail>
-          <Entypo name="air" size={24} color="black" />
-          <Text>Pressure</Text>
-          <Text style = { { fontSize: 24, color: "#111" } }>{ data.list[0].main.pressure }</Text>
-        </DailyWeatherDetail>
-          
-        <DailyWeatherDetail>
-          <Feather name="cloud-rain" size={24} color="black" />
-          <Text>Precipitation</Text>
-          <Text style = { { fontSize: 24, color: "#111" } }>{ data.list[0].rain["3h"] }</Text>
-        </DailyWeatherDetail>
-
-        <DailyWeatherDetail>
-          <Entypo name="water" size={24} color="black" />
-          <Text>Humidity</Text>
-          <Text style = { { fontSize: 24, color: "#111" } }>{ data.list[0].main.humidity }</Text>
-        </DailyWeatherDetail>
-        </View>
+        <DailyWeatherDetail icon="wind" property="Wind" measurement="km/h" value={ Math.round(data.list[0].wind.speed * 3.6) } />
+        <DailyWeatherDetail icon="air" property="Pressure" measurement="hPA" value={ data.list[0].main.pressure } />
+        <DailyWeatherDetail icon="cloud-rain" property="Precipitation" measurement="mm" value={ data.list[0].rain ? data.list[0].rain["3h"] : 0 } />
+        <DailyWeatherDetail icon="water" property="Humidity" measurement="%" value={ data.list[0].main.humidity } />
+      </View>
   
         <View style = { styles.today__hourly }>
-          <View style = { styles.weather_now }>
-            <Text style = { { fontSize: 16, color: "#111" } }>NOW</Text>
-            <Image style = { styles.weatherIcon } source={ getWeatherIcon(data.list[0].weather[0].icon) }></Image>
-            <Text style = { { fontSize: 22, color: "#111" } }>{ data.list[0].main.temp.toFixed(1) }</Text>
-          </View>
-          <View style = { styles.weather_next_hours }>
-            <Text style = { { fontSize: 16, color: "#111" } }>{ getHour(data.list[1].dt) }</Text>
-            <Image style = { styles.weatherIcon } source={ getWeatherIcon(data.list[1].weather[0].icon) }></Image>
-            <Text style = { { fontSize: 18, color: "#111" } }>{ data.list[1].main.temp.toFixed(1) }</Text>
-          </View>  
-          <View style = { styles.weather_next_hours }>
-            <Text style = { { fontSize: 16, color: "#111" } }>{ getHour(data.list[2].dt) }</Text>
-            <Image style = { styles.weatherIcon } source={ getWeatherIcon(data.list[2].weather[0].icon) }></Image>
-            <Text style = { { fontSize: 18, color: "#111" } }>{ data.list[2].main.temp.toFixed(1) }</Text>
-          </View>  
-          <View style = { styles.weather_next_hours }>
-            <Text style = { { fontSize: 16, color: "#111" } }>{ getHour(data.list[3].dt) }</Text>
-            <Image style = { styles.weatherIcon } source={ getWeatherIcon(data.list[3].weather[0].icon) }></Image>
-            <Text style = { { fontSize: 18, color: "#111" } }>{ data.list[3].main.temp.toFixed(1) }</Text>
-          </View>  
-          <View style = { styles.weather_next_hours }>
-            <Text style = { { fontSize: 16, color: "#111" } }>{ getHour(data.list[4].dt) }</Text>
-            <Image style = { styles.weatherIcon } source={ getWeatherIcon(data.list[4].weather[0].icon) }></Image>
-            <Text style = { { fontSize: 18, color: "#111" } }>{ data.list[4].main.temp.toFixed(1) }</Text>
-          </View>  
+          <HourlyThumbnail data={ data.list[0] } current={ true } />
+          <HourlyThumbnail data={ data.list[1] } current={ false } />
+          <HourlyThumbnail data={ data.list[2] } current={ false } />
+          <HourlyThumbnail data={ data.list[3] } current={ false } />
+          <HourlyThumbnail data={ data.list[4] } current={ false } />
         </View>
   
         <View style = { styles.navigation }>
@@ -402,11 +372,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   main: {
+    position: "relative",
     alignItems: "center",
     justifyContent: "space-evenly",
     width: "98%",
     height: "50%",
     marginBottom: 10,
+    borderWidth: 2,
+    borderColor: "#333",
+    borderRadius: 30,
   },
   background: {
     flex: 1,
@@ -416,28 +390,55 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   date: {
+    width: "100%",
     paddingHorizontal: 30,
     paddingVertical: 4,
     marginTop: -1,
-    alignSelf: "center", // Center with Width Auto Fit Text
+    textAlign: "center",
     fontSize: 20,
-    backgroundColor: "#111",
+    backgroundColor: "#050505",
     borderWidth: 2,
     borderColor: "black",
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    borderWidth: 2,
+    color: "#aaa",
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    borderBottomWidth: 2,
     fontWeight: 300,
+  },
+  mainTempBox: {
+    height: 100,
+    position: "absolute",
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "flex-end",
+    alignContent: "flex-end",
+    right: "5%",
+    bottom: "15%",
+  },
+  mainTempText: {
+    height: 100,
+    fontSize: 100,
+    fontWeight: "bold",
+    opacity: 0.6,
+  },
+  mainTempMeasurement: {
+    marginLeft: 10,
+    height: 75,
+    fontSize: 70,
+    fontWeight: "bold",
+    opacity: 0.6,
   },
   location: {
     width: "100%",
-    paddingVertical: 4,
+    paddingVertical: 6,
     marginBottom: -1,
     alignSelf: "center", // Center with Width Auto Fit Text
     fontSize: 20,
+    color: "#ccc",
     backgroundColor: "#111",
-    borderWidth: 2,
-    borderColor: "black",
+    borderTopWidth: 1,
+    borderColor: "#333",
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
     fontWeight: 300,
@@ -481,11 +482,6 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 20,
   },
-  weatherIcon: {
-    width: "80%",
-    height: "50%",
-    resizeMode: "contain"
-  },
   navigation: {
     alignItems: "center",
     justifyContent: "center",
@@ -518,12 +514,12 @@ numberOfLines= { textLines }
       </TouchableWithoutFeedback>
       <Button 
         title="THEME"
-        onPress={ () => Alert.alert("THEME", Appearance.getColorScheme(), [{ "text": "Sod Off!" }, {"text": "Oki Doc"}]) }
+        onPress={ () => Alert.alert("THEME", Appearance.getColorScheme(), [{ "text": "!" }, {"text": "Oki Doc"}]) }
       />
 
       <Button 
         title="Press Me"
-        onPress={ () => Alert.alert("Button Press Count", ++buttonPressed + "", [{ "text": "Sod Off!" }, {"text": "Oki Doc"}]) }
+        onPress={ () => Alert.alert("Button Press Count", ++buttonPressed + "", [{ "text": "" }, {"text": "Oki Doc"}]) }
       />
 
 
