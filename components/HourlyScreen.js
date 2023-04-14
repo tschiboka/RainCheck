@@ -37,33 +37,33 @@ export default function HourlyScreen({ navigation }) {
         <View style={ styles.currentContainer }>
           <View style={ styles.currentContainerRow }>
             <View style={ [styles.currentContainerCell, {  width: "18%" }] }>
-              <Text style={{ fontSize: 18, fontWeight: "bold", width: "100%", textAlign: "left" }}>{ getDay(data.list[0].dt) }</Text>
+              <Text style={{ fontSize: 18, fontWeight: "bold", width: "100%", textAlign: "left", color: "#ddd" }}>{ getDay(data.list[0].dt) }</Text>
             </View>
             <View style={ [styles.currentContainerCell, {  width: "18%" }] }>
               <Image source={ getWeatherIcon(data.list[0].weather[0].icon) } style={ styles.currentIcon }></Image>
             </View>
             <View style={ [styles.currentContainerCell, {  width: "18%" }] }>
               <Text style={{ color: "#999" }}>{ Math.round(Number(data.list[0].main.temp_min * 10)) / 10 } C</Text>
-              <Text>Min</Text>
+              <Text style={{ color: "#ddd" }}>Min</Text>
             </View>
             <View style={ [styles.currentContainerCell, {  width: "18%" }] }>
             <Text style={{ color: "#999" }}>{ Math.round(Number(data.list[0].main.temp_max * 10)) / 10 } C</Text>
-              <Text>Max</Text>
+              <Text style={{ color: "#ddd" }}>Max</Text>
             </View>
             <View style={ [styles.currentContainerCell, {  width: "18%" }] }>
             <Text style={{ color: "#999" }}>{ Math.round(Number(data.list[0].main.feels_like * 10)) / 10 } C</Text>
-              <Text>Feel</Text>
+              <Text  style={{ color: "#ddd" }}>Feel</Text>
             </View>
           </View>
           <View style={ styles.currentContainerRow }>
             <View style={ styles.currentContainerCell }>
-              <Text style={{ textAlign: "left", width: "100%", fontWeight: "bold" }}>Wind</Text>
+              <Text style={{ textAlign: "left", width: "100%", fontWeight: "bold", color: "#ddd" }}>Wind</Text>
             </View>
             <View style={ [styles.currentContainerCell, { borderRightWidth: 1, borderColor: "#050505" }] }>
               <Text style={{ color: "#999" }}>{ Math.round(data.list[0].wind.speed * 3.6) } km/h</Text>
             </View>
             <View style={ styles.currentContainerCell }>
-              <Text style={{ textAlign: "left", width: "100%", fontWeight: "bold" }}>Rain</Text>
+              <Text style={{ textAlign: "left", width: "100%", fontWeight: "bold", color: "#ddd" }}>Rain</Text>
             </View>
             <View style={ styles.currentContainerCell }>
               <Text style={{ color: "#999" }}>{ data.list[0].rain ? data.list[0].rain["3h"]: "" } mm</Text>
@@ -71,20 +71,20 @@ export default function HourlyScreen({ navigation }) {
           </View>
           <View style={ [styles.currentContainerRow, { borderBottomWidth: 0 }] }>
             <View style={ styles.currentContainerCell }>
-              <Text style={{ textAlign: "left", width: "100%", fontWeight: "bold" }}>Pressure</Text>
+              <Text style={{ textAlign: "left", width: "100%", fontWeight: "bold", color: "#ddd" }}>Pressure</Text>
             </View>
             <View style={ [styles.currentContainerCell, { borderRightWidth: 1, borderColor: "#050505" }] }>
               <Text style={{ color: "#999" }}>{ data.list[0].main.pressure } hPA</Text>
             </View>
             <View style={ styles.currentContainerCell }>
-              <Text style={{ textAlign: "left", width: "100%", fontWeight: "bold" }}>Humidity</Text>
+              <Text style={{ textAlign: "left", width: "100%", fontWeight: "bold", color: "#ddd" }}>Humidity</Text>
             </View>
             <View style={ styles.currentContainerCell }>
               <Text style={{ color: "#999" }}>{ data.list[0].main.humidity } %</Text>
             </View>
           </View>      
         </View>
-        <View style={ styles.hourlyListContainerOuter }>
+        <View style={ styles.hourlyListContainerOuter  }>
           <ScrollView style={ styles.scroll }>
             <View style={ styles.hourlyListContainer }>
               { getListItems(data) }
@@ -103,10 +103,11 @@ export default function HourlyScreen({ navigation }) {
 
 
 function getListItems(data) {
+  const { lowestWeeklyTemp, highestWeeklyTemp } = { ...getTemperatureExtremes(data) };
   return data.list.map((item, index) => 
   <View style={ styles.hourlyItem } key={`hourlyListItem_${ index }`}>
       <View style={ styles.listDateTime }>
-          <View style={ styles.listDay }><Text style={{ fontWeight: "bold" }}>{ getShortDay(item.dt) }</Text></View>
+          <View style={ styles.listDay }><Text style={{ fontWeight: "bold", color: "#ddd" }}>{ getShortDay(item.dt) }</Text></View>
           <View style={ styles.listTime }><Text style={{ color: "#999" }}>{ getTime(item.dt) }</Text></View>
       </View>
       <View style={ styles.listIconContainer }>
@@ -114,12 +115,15 @@ function getListItems(data) {
       </View>
       <View style={ styles.listRainContainer }>
         <Entypo name="water" style={ styles.listRainIcon } />
-        <Text style={ styles.listRainText }>{ item.rain ? item.rain["3h"]: "" }</Text>
+        <Text style={ styles.listRainText }>{ item.rain ? item.rain["3h"]: "-" }</Text>
       </View>
       <View style={ styles.listDiagramContainer }>
+        <View style={ styles.diagram }>
+          { getDiagram(item, lowestWeeklyTemp, highestWeeklyTemp) }
+        </View>
       </View>
       <View style={ styles.listTempContainer }>
-      <Text style={{ fontWeight: "bold" }}>{ Math.round(Number(item.main.temp * 10)) / 10 } C</Text>
+      <Text style={{ fontWeight: "bold", color: "#ddd" }}>{ Math.round(Number(item.main.temp * 10)) / 10 } C</Text>
       </View>
     </View>
   )
@@ -181,6 +185,38 @@ function getWeatherIcon(icon) {
 
 
 
+function getTemperatureExtremes(data) {
+  console.log(data.list[20])
+  const lowestWeeklyTemp = Math.floor(Math.min(...data.list.map(d => d.main.temp_min)));
+  const highestWeeklyTemp = Math.ceil(Math.max(...data.list.map(d => d.main.temp_max)));
+  return { lowestWeeklyTemp, highestWeeklyTemp }
+}
+
+
+
+function getDiagram(item, lowestWeeklyTemp, highestWeeklyTemp) {
+  const minTemp = item.main.temp_min;
+  const maxTemp = item.main.temp_max;
+  const minDiff = minTemp - lowestWeeklyTemp;
+  const maxDiff = highestWeeklyTemp - maxTemp;
+  const totalDiff = highestWeeklyTemp - lowestWeeklyTemp + (highestWeeklyTemp - lowestWeeklyTemp) / 10;
+  const startPc = (minDiff / totalDiff) * 100;
+  const endPc = (maxDiff / totalDiff) * 100;
+  const temp = item.main.temp;
+  const avgPc = Math.round(((temp - lowestWeeklyTemp) / totalDiff) * 100);
+  const colorBand = Math.floor(avgPc / 20);
+  const color = ["aqua", "springgreen", "yellow", "orange", "deeppink"][colorBand];
+  console.log(lowestWeeklyTemp, highestWeeklyTemp, temp);
+  console.log("-->", avgPc, colorBand);
+  return <View style={ [ 
+    styles.diagramThumb, { 
+      marginLeft: startPc + "%",
+      marginRight: endPc + "%",
+      backgroundColor: color
+    }]}></View>
+}
+
+
 
 
 // Style
@@ -222,7 +258,8 @@ const styles = StyleSheet.create({
   },
   header: {
     margin: 10,
-    fontSize: 20
+    fontSize: 20,
+    color: "#aaa"
   },
   currentContainer: {
     width: "98%",
@@ -338,10 +375,20 @@ const styles = StyleSheet.create({
   },
   listDiagramContainer: {
     width: "48%",
+    justifyContent: "center",
+    alignItems: "center",
     borderColor: "black",
     borderLeftWidth: 2,
     borderRightWidth: 2,
     backgroundColor: "#111"
+  },
+  diagram: {
+    width: "90%",
+    height: 15,
+    backgroundColor: "#090909",
+    borderRadius: 20,
+    borderColor: "black",
+    borderWidth: 2,
   },
   listTempContainer: {
     width: "13%",
@@ -350,4 +397,10 @@ const styles = StyleSheet.create({
     borderLeftWidth: 1,
     borderLeftColor: "#222"
   },
+  diagramThumb: {
+    height: "100%",
+    minWidth: "10%",
+    borderRadius: 10,
+    opacity: 0.8,
+  }
 });

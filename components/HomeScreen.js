@@ -13,18 +13,6 @@ import HourlyThumbnail from '../components/HourlyThumbnail';
 
 // Icons
 import { EvilIcons } from '@expo/vector-icons';
-const icon_00 = require("../assets/weather_icons/00.png");
-const icon_01d = require("../assets/weather_icons/01d.png");
-const icon_01n = require("../assets/weather_icons/01n.png");
-const icon_02d = require("../assets/weather_icons/02d.png");
-const icon_02n = require("../assets/weather_icons/02n.png");
-const icon_03d = require("../assets/weather_icons/03d.png");
-const icon_03n = require("../assets/weather_icons/03n.png");
-const icon_09d = require("../assets/weather_icons/09d.png");
-const icon_09n = require("../assets/weather_icons/09n.png");
-const icon_10 = require("../assets/weather_icons/10.png");
-const icon_11 = require("../assets/weather_icons/11.png");
-
 
 
 // Backgrounds
@@ -209,12 +197,14 @@ const styles = StyleSheet.create({
     height: 100,
     fontSize: 100,
     fontWeight: "bold",
+    color: "white",
     opacity: 0.6,
   },
   mainTempMeasurement: {
     marginLeft: 10,
     height: 75,
     fontSize: 70,
+    color: "white",
     fontWeight: "bold",
     opacity: 0.6,
   },

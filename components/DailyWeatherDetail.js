@@ -20,8 +20,8 @@ export default function DailyWeatherDetail(props) {
     <View style = { styles.dailyDetail }>
           <View style={ styles.iconBox }>{ getIcon(props.icon) }</View>
           <View style={ styles.middleText }><Text style = {{ color: "#999" }}>{ props.property }</Text></View>
-          <View style={ styles.middleText }><Text style = {{ color: "#777" }}>{ props.measurement }</Text></View>
-          <View style = { styles.bottomText }><Text style = {{ fontSize: 20 }}>{ props.value }</Text></View>
+          <View style={ styles.middleText }><Text style = {{ color: "#555" }}>{ props.measurement }</Text></View>
+          <View style = { styles.bottomText }><Text style = {{ fontSize: 20, color: "#ddd" }}>{ props.value }</Text></View>
     </View>
   )
 }

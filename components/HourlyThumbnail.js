@@ -59,8 +59,8 @@ export default function HourlyThumbnail(props) {
         <View style = { styles.weatherTop }>
             {
                 props.current 
-                    ? <Text style = {{ fontWeight: (props.current ? "bold" : "normal") }}>NOW</Text>
-                    : <Text>{ getHour(props.data.dt) }</Text>
+                    ? <Text style = {{ fontWeight: (props.current ? "bold" : "normal"), color: "#aaa" }}>NOW</Text>
+                    : <Text style = {{ color: "#999" }}>{ getHour(props.data.dt) }</Text>
             }
         </View>
         <View style = { styles.weatherMiddle }>
@@ -80,7 +80,7 @@ export default function HourlyThumbnail(props) {
         <View style = { styles.weatherBottom }>
             <Text style={{ 
                 fontSize: 18,
-                fontWeight: props.current ? "bold" : "normal" }}>
+                fontWeight: props.current ? "bold" : "normal", color: props.current ? "#ddd" : "#aaa"}}>
                 { (Math.round(Number(props.data.main.temp * 10)) / 10).toFixed(1) }
             </Text>
         </View>
