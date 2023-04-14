@@ -1,10 +1,11 @@
+// Dependencies
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ActivityIndicator, Screen, StyleSheet, Text, View, ImageBackground } from 'react-native';
 import { useEffect, useContext } from 'react';
 import { AppStateContext } from '../AppState';
 
 
-// // Components
+// Components
 import DailyWeatherDetail from '../components/DailyWeatherDetail';
 import HourlyThumbnail from '../components/HourlyThumbnail';
 

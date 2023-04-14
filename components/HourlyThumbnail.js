@@ -54,7 +54,6 @@ function getWeatherIcon(icon) {
 
 
 export default function HourlyThumbnail(props) {
-    console.log(props.current)
     return (
       <View style = { props.current ? styles.weather_now : styles.weather_next_hours }>
         <View style = { styles.weatherTop }>
