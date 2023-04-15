@@ -35,7 +35,7 @@ export default function HourlyScreen({ navigation }) {
           <Text style={ styles.header }>Hourly Forecast</Text>
         </View>
         <View style={ styles.currentContainer }>
-          <View style={ styles.currentContainerRow }>
+          <View style={ [styles.currentContainerRow, { backgroundColor: "#0a0a0a", borderTopLeftRadius: 20, borderTopRightRadius: 20 }] }>
             <View style={ [styles.currentContainerCell, {  width: "18%" }] }>
               <Text style={{ fontSize: 18, fontWeight: "bold", width: "100%", textAlign: "left", color: "#ddd" }}>{ getDay(data.list[0].dt) }</Text>
             </View>
@@ -43,15 +43,15 @@ export default function HourlyScreen({ navigation }) {
               <Image source={ getWeatherIcon(data.list[0].weather[0].icon) } style={ styles.currentIcon }></Image>
             </View>
             <View style={ [styles.currentContainerCell, {  width: "18%" }] }>
-              <Text style={{ color: "#999" }}>{ Math.round(Number(data.list[0].main.temp_min * 10)) / 10 } C</Text>
+              <Text style={{ color: "white", fontWeight: "bold" }}>{ Math.round(Number(data.list[0].main.temp_min * 10)) / 10 } C</Text>
               <Text style={{ color: "#ddd" }}>Min</Text>
             </View>
             <View style={ [styles.currentContainerCell, {  width: "18%" }] }>
-            <Text style={{ color: "#999" }}>{ Math.round(Number(data.list[0].main.temp_max * 10)) / 10 } C</Text>
+            <Text style={{ color: "white", fontWeight: "bold" }}>{ Math.round(Number(data.list[0].main.temp_max * 10)) / 10 } C</Text>
               <Text style={{ color: "#ddd" }}>Max</Text>
             </View>
             <View style={ [styles.currentContainerCell, {  width: "18%" }] }>
-            <Text style={{ color: "#999" }}>{ Math.round(Number(data.list[0].main.feels_like * 10)) / 10 } C</Text>
+            <Text style={{ color: "white", fontWeight: "bold" }}>{ Math.round(Number(data.list[0].main.feels_like * 10)) / 10 } C</Text>
               <Text  style={{ color: "#ddd" }}>Feel</Text>
             </View>
           </View>
@@ -186,7 +186,6 @@ function getWeatherIcon(icon) {
 
 
 function getTemperatureExtremes(data) {
-  console.log(data.list[20])
   const lowestWeeklyTemp = Math.floor(Math.min(...data.list.map(d => d.main.temp_min)));
   const highestWeeklyTemp = Math.ceil(Math.max(...data.list.map(d => d.main.temp_max)));
   return { lowestWeeklyTemp, highestWeeklyTemp }
@@ -206,8 +205,6 @@ function getDiagram(item, lowestWeeklyTemp, highestWeeklyTemp) {
   const avgPc = Math.round(((temp - lowestWeeklyTemp) / totalDiff) * 100);
   const colorBand = Math.floor(avgPc / 20);
   const color = ["aqua", "springgreen", "yellow", "orange", "deeppink"][colorBand];
-  console.log(lowestWeeklyTemp, highestWeeklyTemp, temp);
-  console.log("-->", avgPc, colorBand);
   return <View style={ [ 
     styles.diagramThumb, { 
       marginLeft: startPc + "%",
@@ -259,7 +256,7 @@ const styles = StyleSheet.create({
   header: {
     margin: 10,
     fontSize: 20,
-    color: "#aaa"
+    color: "#ddd"
   },
   currentContainer: {
     width: "98%",
@@ -276,7 +273,7 @@ const styles = StyleSheet.create({
   currentContainerRow: {
     flexDirection: "row",
     justifyContent: 'space-evenly',
-    width: "96%",
+    width: "98%",
     height: "30%",
     borderBottomWidth: 1,
     borderColor: "#000"
@@ -330,7 +327,7 @@ const styles = StyleSheet.create({
     width: "13%",
     height: "100%",
     borderRightWidth: 2,
-    borderColor: "#222",
+    borderColor: "#000",
     backgroundColor: "#0a0a0a",
     borderTopLeftRadius: 15,
     borderBottomLeftRadius: 15,
@@ -351,12 +348,10 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "center",
     alignItems: "center",
-    borderRightWidth: 1,
-    borderColor: "#222",
   },
   listIcon: {
     width: "70%",
-    height: "70%",
+    resizeMode: "contain"
   },
   listRainContainer: {
     width: "13%",

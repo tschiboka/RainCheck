@@ -35,18 +35,18 @@ export const AppStateProvider = ({ children }) => {
         })
         .catch(err => console.log(err))
         // Dummy Loading Here!!!!!!!!!!!!! Delete this line for real-time data loading
-        .finally(() => {
-            setData(weather_dummy_data);
-            setIsLoading(false);
-        });
+        // .finally(() => {
+        //     setData(weather_dummy_data);
+        //     setIsLoading(false);
+        // });
 
         // Real Time Data Loading HERE Delete Comments to Take Effect
         // Get Weather Data
-          // fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${ latitude }&lon=${ longitude }&units=metric&appid=${ REACT_APP_OPENWEATHERMAP_API }`)
-          //   .then(response => response.json())
-          //   .then(json => setData(json))
-          //   .catch(err => console.log(err))
-          //   .finally(() => setIsLoading(false));
+          fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${ latitude }&lon=${ longitude }&units=metric&appid=${ REACT_APP_OPENWEATHERMAP_API }`)
+            .then(response => response.json())
+            .then(json => setData(json))
+            .catch(err => console.log(err))
+            .finally(() => setIsLoading(false));
 
     };
     
