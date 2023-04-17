@@ -55,7 +55,7 @@ export default function DailyScreen(props) {
             <View style={ styles.body }>
                 <View style={ styles.chartContainer }>
                     {
-                        Object.keys(dataPoints).map((key, index) => createDataPoint(dataPoints[key], index, props.lowestWeeklyTemp, props.highestWeeklyTemp))
+                        Object.keys(dataPoints).map((key, index) => createDataPoint(dataPoints[key], index, props.lowestWeeklyTemp, props.highestWeeklyTemp), props.name)
                     }
                 </View>
                 <View style={ styles.chartExplanation }>
@@ -153,16 +153,16 @@ function getHourlyDataList(data) {
 
 
 
-function createDataPoint(data, index, lowestWeeklyTemp, highestWeeklyTemp) {
-    const icon = getWeatherIcon(data && data.weather[0].icon)
+function createDataPoint(data, index, lowestWeeklyTemp, highestWeeklyTemp, name) {
     if (!data) return (
-        <View style={ styles.dataPoint }>
+        <View style={ styles.dataPoint } key={ "datapoint" + name + index }>
             <View style={ styles.weatherIcon }></View>
             <View style={ styles.bar }></View>
             <View style={ styles.temperature }><Text style={{ color: "#999" }}>-</Text></View>
         </View>
     );
-
+    
+    const icon = getWeatherIcon(data.weather[0].icon)
     const totalDiff = highestWeeklyTemp - lowestWeeklyTemp;
     const temp = data.main.temp;
     const avgPc = Math.round(((temp - lowestWeeklyTemp) / totalDiff) * 100);
@@ -170,7 +170,7 @@ function createDataPoint(data, index, lowestWeeklyTemp, highestWeeklyTemp) {
     const backgroundColor = ["aqua", "springgreen", "yellow", "orange", "deeppink"][colorBand];
 
     return (
-        <View style={ styles.dataPoint }>
+        <View style={ styles.dataPoint } key={ "datapoint" + name + index }>
             <View style={ styles.weatherIcon }>
                 <Image source={ icon } style={ styles.hourlyWeatherIcon } />
             </View>
@@ -274,7 +274,8 @@ const styles = StyleSheet.create({
   body: {
     height: 150,
     width: "96%",
-    flexDirection: "row"
+    flexDirection: "row",
+    justifyContent: "space-between"
   },
   chartContainer: {
     width: "82.5%",
@@ -324,7 +325,7 @@ const styles = StyleSheet.create({
   chartExplanation: {
     justifyContent: "space-evenly",
     alignItems: "center",
-    width: "17.5%",
+    width: "15%",
     height: "100%",
   },
   explanation: {

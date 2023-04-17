@@ -1,6 +1,6 @@
 // Dependencies
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ActivityIndicator, Screen, StyleSheet, Text, View, Image } from 'react-native';
+import { ActivityIndicator, Screen, StyleSheet, Text, View, Image, Button } from 'react-native';
 import { useEffect, useContext } from 'react';
 import { AppStateContext } from '../AppState';
 
@@ -8,7 +8,7 @@ import { AppStateContext } from '../AppState';
 import { FontAwesome } from '@expo/vector-icons';
 
 export default function SettingsScreen({ navigation }) {
-    const { isLoading, setIsLoading, data, setData, location, setLocation, locationName, setLocationName } = useContext(AppStateContext);
+    const { isLoading, setIsLoading, data, setData, location, setLocation, locationName, setLocationName, refreshData, setRefreshData } = useContext(AppStateContext);
     console.log("SETTINGS RENDER")
     return  isLoading ? (
       <View style={ styles.app_loading }>
@@ -19,6 +19,12 @@ export default function SettingsScreen({ navigation }) {
         <View style={ styles.headerContainer }>
           <FontAwesome name="umbrella" style={ styles.headerImage } />
           <Text style={ styles.header }>Settings</Text>
+        </View>
+
+        <Text onPress={ () => {console.log("CLICK"); setRefreshData(true);} } style={ styles.refreshButton }>Refresh Weather Data</Text>
+
+        <View style={ styles.unitSelection }>
+
         </View>
       </SafeAreaView>
   ) : (
@@ -69,6 +75,19 @@ const styles = StyleSheet.create({
   },
   header: {
     margin: 10,
-    fontSize: 20
+    fontSize: 20,
+    color: "#aaa"  
+  },
+  refreshButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 50,
+    borderRadius: 20,
+    backgroundColor: "#111",
+    borderWidth: 1,
+    borderColor: "#222",
+    fontSize: 16,
+  },
+  unitSelection: {
+
   }
 });

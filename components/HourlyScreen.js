@@ -7,6 +7,10 @@ import { AppStateContext } from '../AppState';
 // Icons
 import { FontAwesome } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons'; 
+import { Feather } from '@expo/vector-icons';
+import { EvilIcons } from '@expo/vector-icons';
+
 const icon_00 = require("../assets/weather_icons/00.png");
 const icon_01d = require("../assets/weather_icons/01d.png");
 const icon_01n = require("../assets/weather_icons/01n.png");
@@ -20,6 +24,16 @@ const icon_10 = require("../assets/weather_icons/10.png");
 const icon_11 = require("../assets/weather_icons/11.png");
 
 
+function getIcon(icon) {
+  switch(icon) {
+    case "wind": return <Feather name="wind" style={ styles.propertyIcon } />
+    case "air": return <Entypo name="air" style={ styles.propertyIcon } />
+    case "cloud-rain": return <Feather name="cloud-rain" style={ styles.propertyIcon } />
+    case "water": return <Entypo name="water" style={ styles.propertyIcon } />
+    case "sun": return <Feather name="sun" style={ styles.propertyIcon } />
+    case "moon": return <FontAwesome5 name="moon" style={ styles.propertyIcon } />
+  }
+}
 
 export default function HourlyScreen({ navigation }) {
     const { isLoading, setIsLoading, data, setData, location, setLocation, locationName, setLocationName } = useContext(AppStateContext);
@@ -35,7 +49,7 @@ export default function HourlyScreen({ navigation }) {
           <Text style={ styles.header }>Hourly Forecast</Text>
         </View>
         <View style={ styles.currentContainer }>
-          <View style={ [styles.currentContainerRow, { backgroundColor: "#0a0a0a", borderTopLeftRadius: 20, borderTopRightRadius: 20 }] }>
+          <View style={ [styles.currentContainerRow, { backgroundColor: "#0a0a0a", borderTopLeftRadius: 20, borderTopRightRadius: 20, height: "35%" }] }>
             <View style={ [styles.currentContainerCell, {  width: "18%" }] }>
               <Text style={{ fontSize: 18, fontWeight: "bold", width: "100%", textAlign: "left", color: "#ddd" }}>{ getDay(data.list[0].dt) }</Text>
             </View>
@@ -56,31 +70,51 @@ export default function HourlyScreen({ navigation }) {
             </View>
           </View>
           <View style={ styles.currentContainerRow }>
-            <View style={ styles.currentContainerCell }>
-              <Text style={{ textAlign: "left", width: "100%", fontWeight: "bold", color: "#ddd" }}>Wind</Text>
+            <View style={ [styles.currentDescriptionCell] }>
+              { getIcon("wind") }
+              <Text style={ styles.propertyText }>Wind</Text>
             </View>
-            <View style={ [styles.currentContainerCell, { borderRightWidth: 1, borderColor: "#050505" }] }>
-              <Text style={{ color: "#999" }}>{ Math.round(data.list[0].wind.speed * 3.6) } km/h</Text>
+            <View style={ [styles.currentDescriptionCell, { borderRightWidth: 1, borderColor: "#050505" }] }>
+              <Text style={  styles.propertyValueText }>{ Math.round(data.list[0].wind.speed * 3.6) } km/h</Text>
             </View>
-            <View style={ styles.currentContainerCell }>
-              <Text style={{ textAlign: "left", width: "100%", fontWeight: "bold", color: "#ddd" }}>Rain</Text>
+            <View style={ styles.currentDescriptionCell }>
+                { getIcon("cloud-rain") }
+                <Text style={ styles.propertyText }>Rain</Text>
             </View>
-            <View style={ styles.currentContainerCell }>
-              <Text style={{ color: "#999" }}>{ data.list[0].rain ? data.list[0].rain["3h"]: "" } mm</Text>
+            <View style={ styles.currentDescriptionCell }>
+              <Text style={  styles.propertyValueText }>{ data.list[0].rain ? data.list[0].rain["3h"]: "" } mm</Text>
             </View>
           </View>
+          <View style={ [styles.currentContainerRow, ] }>
+            <View style={ styles.currentDescriptionCell }>
+              { getIcon("air") }
+              <Text style={ styles.propertyText }>Pressure</Text>
+            </View>
+            <View style={ [styles.currentDescriptionCell, { borderRightWidth: 1, borderColor: "#050505" }] }>
+              <Text style={  styles.propertyValueText }>{ data.list[0].main.pressure } hPA</Text>
+            </View>
+            <View style={ styles.currentDescriptionCell }>
+              { getIcon("water") }
+              <Text style={ styles.propertyText }>Humidity</Text>
+            </View>
+            <View style={ styles.currentDescriptionCell }>
+              <Text style={  styles.propertyValueText }>{ data.list[0].main.humidity } %</Text>
+            </View>
+          </View>      
           <View style={ [styles.currentContainerRow, { borderBottomWidth: 0 }] }>
-            <View style={ styles.currentContainerCell }>
-              <Text style={{ textAlign: "left", width: "100%", fontWeight: "bold", color: "#ddd" }}>Pressure</Text>
+            <View style={ styles.currentDescriptionCell }>
+              { getIcon("sun") }
+              <Text style={ styles.propertyText }>Sunrise</Text>
             </View>
-            <View style={ [styles.currentContainerCell, { borderRightWidth: 1, borderColor: "#050505" }] }>
-              <Text style={{ color: "#999" }}>{ data.list[0].main.pressure } hPA</Text>
+            <View style={ [styles.currentDescriptionCell, { borderRightWidth: 1, borderColor: "#050505" }] }>
+              <Text style={  styles.propertyValueText }>{ getHourMin(data.city.sunrise) }</Text>
             </View>
-            <View style={ styles.currentContainerCell }>
-              <Text style={{ textAlign: "left", width: "100%", fontWeight: "bold", color: "#ddd" }}>Humidity</Text>
+            <View style={ styles.currentDescriptionCell }>
+              { getIcon("moon") }
+              <Text style={ styles.propertyText }>Sunset</Text>
             </View>
-            <View style={ styles.currentContainerCell }>
-              <Text style={{ color: "#999" }}>{ data.list[0].main.humidity } %</Text>
+            <View style={ styles.currentDescriptionCell }>
+              <Text style={  styles.propertyValueText }>{ getHourMin(data.city.sunset) }</Text>
             </View>
           </View>      
         </View>
@@ -215,6 +249,16 @@ function getDiagram(item, lowestWeeklyTemp, highestWeeklyTemp) {
 
 
 
+const pad = n => n < 10 ? "0" + n : n;
+function getHourMin(d) {
+  const date = new Date(d * 1000);  // Uniqe Style Time Handling (in secs)
+  let hour = date.getHours();
+  let min = date.getMinutes();
+  return pad(hour) + ":" + pad(min);
+}
+
+
+
 
 // Style
 const styles = StyleSheet.create({
@@ -274,15 +318,41 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: 'space-evenly',
     width: "98%",
-    height: "30%",
+    height: "19%",
     borderBottomWidth: 1,
-    borderColor: "#000"
+    borderColor: "#000",
   },
   currentContainerCell: {
     width: "20%",
     height: "100%",
     justifyContent: "space-evenly",
     alignItems: "center",
+  },
+  currentDescriptionCell: {
+    flexDirection: "row",
+    paddingLeft: 10,
+    width: "25%",
+    height: "100%",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  propertyIcon: {
+    width: "30%",
+    fontSize: 14,
+    color: "#ddd"
+  },
+  propertyText: { 
+    paddingLeft: 10, 
+    width: "70%", 
+    fontWeight: "bold", 
+    color: "#aaa",
+    textAlign: "left"
+  },
+  propertyValueText: {
+    width: "100%",
+    color: "#777",
+    textAlign: "right",
+    paddingRight: 10,
   },
   currentIcon: {
     width: "80%",
@@ -396,6 +466,6 @@ const styles = StyleSheet.create({
     height: "100%",
     minWidth: "10%",
     borderRadius: 10,
-    opacity: 0.8,
+    backgroundColor: "white"
   }
 });
