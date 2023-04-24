@@ -14,6 +14,7 @@ export const AppStateProvider = ({ children }) => {
     const [location, setLocation] = useState();
     const [locationName, setLocationName] = useState({ country: "England", city: "London", location: "Ealing" });
     const [data, setData] = useState({});
+    const [isAlertRead, setIsAlertRead] = useState(false);
   
     const fetchData = async () => {
       console.log("FETCH DATA");
@@ -38,6 +39,7 @@ export const AppStateProvider = ({ children }) => {
         
         // Dummy Loading Here!!!!!!!!!!!!! Delete this line for real-time data loading
         .finally(() => {
+            console.log("USE DUMMY DATA");
             setData(weather_dummy_data);
             setIsLoading(false);
             setRefreshData(false);
@@ -66,7 +68,7 @@ export const AppStateProvider = ({ children }) => {
         };
 
     useEffect(() => { 
-      if (refreshData) fetchData(); 
+      if (refreshData) fetchData();
     }, [refreshData]);
   
   return (
@@ -76,6 +78,7 @@ export const AppStateProvider = ({ children }) => {
         location, setLocation,
         locationName, setLocationName,
         data, setData,
+        isAlertRead, setIsAlertRead
     }}>
       {children}
     </AppStateContext.Provider>

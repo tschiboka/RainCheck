@@ -1,7 +1,7 @@
 // Dependencies
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ActivityIndicator, Screen, StyleSheet, Text, View, ImageBackground } from 'react-native';
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { AppStateContext } from '../AppState';
 
 
@@ -13,6 +13,8 @@ import HourlyThumbnail from '../components/HourlyThumbnail';
 
 // Icons
 import { EvilIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 
 
 // Backgrounds
@@ -82,14 +84,49 @@ const winter_night_mist = require("../assets/backgrounds/winter_night_mist.png")
 
 
 export default function HomeScreen({ route, navigation }) {
-    const { isLoading, setIsLoading, data, setData, location, setLocation, locationName, setLocationName } = useContext(AppStateContext);
+    const [ alertMessageOpen, setAlertMessageOpen ] = useState(false);
+    const { isLoading, setIsLoading, data, setData, location, setLocation, locationName, setLocationName, isAlertRead, setIsAlertRead } = useContext(AppStateContext);
     
     return  isLoading ? (
         <View style={ styles.app_loading }>
-        <ActivityIndicator size="large" color="white" />
+          <ActivityIndicator size="large" color="white" />
         </View>
     ) : data.list ? (
-        <SafeAreaView style={ styles.container }>
+      (alertMessageOpen && !isAlertRead)
+      ? <View style = { styles.alertMessageContainer }>
+          <Text style={ styles.alertTitle}>Alert</Text>
+
+          <View style={ styles.alertHeader }>
+            <View style={ styles.alertHeaderRow }>
+              <Text style={ styles.alertHeaderKey }>Event</Text>
+              <Text style={ styles.alertHeaderValue }>{ data.version_3.alerts[0].event }</Text>
+            </View>
+            <View style={ styles.alertHeaderRow }>
+              <Text style={ styles.alertHeaderKey }>Start</Text>
+              <Text style={ styles.alertHeaderValue }>{ data.version_3.alerts[0].start }</Text>
+            </View>
+            <View style={ styles.alertHeaderRow }>
+              <Text style={ styles.alertHeaderKey }>End</Text>
+              <Text style={ styles.alertHeaderValue }>{ data.version_3.alerts[0].end }</Text>
+            </View>
+            <View style={ styles.alertHeaderRow }>
+              <Text style={ styles.alertHeaderKey }>Sender</Text>
+              <Text style={ styles.alertHeaderValue }>{ data.version_3.alerts[0].sender_name }</Text>
+            </View>
+            <View style={ styles.alertHeaderRow }>
+              <Text style={ styles.alertHeaderKey }>Message</Text>
+              <Text style={ styles.alertHeaderValue }>{ data.version_3.alerts[0].description }</Text>
+            </View>
+          </View>
+
+          <View style = { styles.closeAlertButton } >
+            <Text 
+              onPress={ () => setIsAlertRead(true) } 
+              style = {{ fontSize: 16, color: "#999" }}>Got It!
+            </Text>
+          </View>
+        </View>
+      : <SafeAreaView style={ styles.container }>
             <View style = { styles.main }>
                 <ImageBackground
                    source={ getBackgroundImage(data.list[0].weather[0].icon) }
@@ -97,6 +134,17 @@ export default function HomeScreen({ route, navigation }) {
                    imageStyle={{ borderRadius: 40 }}
                 >
                 <Text style = { styles.date }>{ getFormattedDate() }</Text>
+
+                { 
+                  data.version_3.alerts.length && !isAlertRead &&
+                  <View style = { styles.alertContainer } >
+                    <Feather style = { styles.alertIcon } name="alert-octagon" />
+                    <Text 
+                      onPress={ () => showAlert(setIsAlertRead, setAlertMessageOpen, alertMessageOpen) } 
+                      style = {{ fontSize: 16, color: "#999" }}>New Weather Alert!</Text>
+                    <AntDesign onPress={ () => setIsAlertRead(true) } style = { styles.closeButton }name="closecircleo" />
+                  </View>
+                }
                 <Text style = { styles.location }><EvilIcons name="location" size={ 26 } color="#ccc" />
                      { locationName.location }, { locationName.city }, { locationName.country }
                 </Text>
@@ -163,6 +211,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "space-between",
+    alignItems: "center",
     width: "100%",
     height: "100%",
   },
@@ -272,6 +321,76 @@ const styles = StyleSheet.create({
     backgroundColor: "red",
     width: 20,
     height: 20,
+  },
+  alertContainer: {
+    position: "absolute",
+    top: "10%",
+    minWwidth: "50%",
+    padding: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#111",
+    borderRadius: 15,
+    borderColor: "#222",
+    borderWidth: 1,
+  },
+  alertIcon: {
+    fontSize: 18,
+    color: "deeppink",
+    fontWeight: "bold",
+    marginRight: 10
+  },
+  closeButton: {
+    fontSize: 18,
+    marginLeft: 10,
+    color: "#aaa"
+  },
+  alertMessageContainer: {
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#111",
+    zIndex: 100
+  },
+  alertTitle: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 20
+  },
+  alertHeader: {
+    backgroundColor: "#222",
+    width: "90%",
+    borderRadius: 20,
+    padding: 10
+  },
+  alertHeaderRow: {
+    flexDirection: "row",
+    width: "100%",
+    paddingVertical: 5,
+  },
+  alertHeaderKey: {
+    width: "20%",
+    borderRightColor: "#000",
+    borderRightWidth: 1,
+    fontWeight: "bold"
+  },
+  alertHeaderValue: {
+    width: "80%",
+    paddingLeft: 10,
+    color: "#999"
+  },
+  closeAlertButton: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    borderRadius: 10,
+    backgroundColor: "#222",
+    borderColor: "#555",
+    borderWidth: 1,
   }
 });
 
@@ -398,3 +517,10 @@ function getFormattedDate() {
   return formattedDate;
 }
 
+
+
+function showAlert(setIsAlertRead, setAlertMessageOpen, alertMessageOpen) {
+  console.log("READ ALERT", alertMessageOpen);
+  setAlertMessageOpen(true);
+ // setIsAlertRead(true);
+}
