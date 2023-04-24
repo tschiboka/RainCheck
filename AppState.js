@@ -15,6 +15,7 @@ export const AppStateProvider = ({ children }) => {
     const [locationName, setLocationName] = useState({ country: "England", city: "London", location: "Ealing" });
     const [data, setData] = useState({});
     const [isAlertRead, setIsAlertRead] = useState(false);
+    const [isMetric, setMetric] = useState(true);
   
     const fetchData = async () => {
       console.log("FETCH DATA");
@@ -42,7 +43,6 @@ export const AppStateProvider = ({ children }) => {
             console.log("USE DUMMY DATA");
             setData(weather_dummy_data);
             setIsLoading(false);
-            setRefreshData(false);
         });
 
         // Real Time Data Loading HERE Delete Comments to Take Effect
@@ -68,7 +68,10 @@ export const AppStateProvider = ({ children }) => {
         };
 
     useEffect(() => { 
-      if (refreshData) fetchData();
+      if (refreshData) { 
+        fetchData();
+        setRefreshData(false);
+      }
     }, [refreshData]);
   
   return (
@@ -78,7 +81,8 @@ export const AppStateProvider = ({ children }) => {
         location, setLocation,
         locationName, setLocationName,
         data, setData,
-        isAlertRead, setIsAlertRead
+        isAlertRead, setIsAlertRead,
+        isMetric, setMetric,
     }}>
       {children}
     </AppStateContext.Provider>

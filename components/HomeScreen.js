@@ -103,11 +103,11 @@ export default function HomeScreen({ route, navigation }) {
             </View>
             <View style={ styles.alertHeaderRow }>
               <Text style={ styles.alertHeaderKey }>Start</Text>
-              <Text style={ styles.alertHeaderValue }>{ data.version_3.alerts[0].start }</Text>
+              <Text style={ styles.alertHeaderValue }>{ new Date(data.version_3.alerts[0].start * 1000).toString() }</Text>
             </View>
             <View style={ styles.alertHeaderRow }>
               <Text style={ styles.alertHeaderKey }>End</Text>
-              <Text style={ styles.alertHeaderValue }>{ data.version_3.alerts[0].end }</Text>
+              <Text style={ styles.alertHeaderValue }>{ new Date(data.version_3.alerts[0].end * 1000).toString() }</Text>
             </View>
             <View style={ styles.alertHeaderRow }>
               <Text style={ styles.alertHeaderKey }>Sender</Text>
@@ -136,7 +136,7 @@ export default function HomeScreen({ route, navigation }) {
                 <Text style = { styles.date }>{ getFormattedDate() }</Text>
 
                 { 
-                  data.version_3.alerts.length && !isAlertRead &&
+                  data.version_3.alerts?.length && !isAlertRead &&
                   <View style = { styles.alertContainer } >
                     <Feather style = { styles.alertIcon } name="alert-octagon" />
                     <Text 

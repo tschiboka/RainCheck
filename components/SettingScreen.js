@@ -6,9 +6,10 @@ import { AppStateContext } from '../AppState';
 
 // Icons
 import { FontAwesome } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 
 export default function SettingsScreen({ navigation }) {
-    const { isLoading, setIsLoading, data, setData, location, setLocation, locationName, setLocationName, refreshData, setRefreshData } = useContext(AppStateContext);
+    const { isLoading, setIsLoading, data, setData, location, setLocation, locationName, setLocationName, refreshData, setRefreshData, isMetric, setMetric } = useContext(AppStateContext);
     console.log("SETTINGS RENDER")
     return  isLoading ? (
       <View style={ styles.app_loading }>
@@ -21,10 +22,25 @@ export default function SettingsScreen({ navigation }) {
           <Text style={ styles.header }>Settings</Text>
         </View>
 
-        <Text onPress={ () => {console.log("CLICK"); setRefreshData(true);} } style={ styles.refreshButton }>Refresh Weather Data</Text>
+        <Text onPress={ () => { setRefreshData(true);} } style={ styles.refreshButton }>Refresh Weather Data</Text>
 
         <View style={ styles.unitSelection }>
-
+          <View style={ styles.metricOption }>
+            <View style={ styles.checkBox }>
+              { isMetric && <Feather name="check" style={ styles.checkSign } /> }
+            </View>
+            <Text style={{ color: "#aaa" }} onPress={ () => { setMetric(true); } }>
+              Metric Units (Celsius)
+            </Text>
+          </View>
+          <View style={ styles.metricOption }>
+          <View style={ styles.checkBox }>
+              { !isMetric && <Feather name="check" style={ styles.checkSign } /> }
+            </View>
+            <Text style={{ color: "#aaa" }} onPress={ () => { setMetric(false); } }>
+              Imperial Units (Fahrenheit)
+            </Text>
+          </View>
         </View>
       </SafeAreaView>
   ) : (
@@ -51,7 +67,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#050505',
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     height: "91%",
   },
   headerContainer: {
@@ -81,13 +97,42 @@ const styles = StyleSheet.create({
   refreshButton: {
     paddingVertical: 10,
     paddingHorizontal: 50,
+    marginVertical: 20,
     borderRadius: 20,
     backgroundColor: "#111",
     borderWidth: 1,
     borderColor: "#222",
     fontSize: 16,
+    color: "#999"
   },
   unitSelection: {
-
+    width: "95%",
+    padding: 10,
+    marginHorizontal: 20,
+    backgroundColor: "#111",
+    fontSize: 16,
+    borderColor: "#222",
+    borderWidth: 1,
+    borderRadius: 10
+  },
+  metricOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 5,
+  },
+  checkBox: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 20,
+    height: 20,
+    marginRight: 20,
+    borderColor: "#222",
+    borderWidth: 2,
+    backgroundColor: "black",
+    borderRadius: 5,
+  },
+  checkSign: {
+    color: "aqua",
+    fontSize: 14
   }
 });
