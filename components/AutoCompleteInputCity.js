@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 
 export default function AutoCompleteInputCity(props) {
-    const { location, setLocation, locationName, setLocationName, refreshData, setRefreshData, useMyLocation, setUseMyLocation } = useContext(AppStateContext);
+    const { location, setLocation, locationName, setLocationName, refreshData, setRefreshData, useMyLocation, setUseMyLocation, localStorage } = useContext(AppStateContext);
     const [cityOptionList, setCityOptionList] = useState([]);
     const [text, setText] = useState("");
     return (
@@ -27,7 +27,7 @@ export default function AutoCompleteInputCity(props) {
                 onChangeText={ text => handleOnChange(text, props.list, setCityOptionList, setText) }
                 >
                 </TextInput>
-                <Ionicons style={ styles.refreshCity } name="refresh" size={20} color="black" onPress={ () => props.refreshLocation(props.currentItem?.city, props.currentItem?.countryCode, useMyLocation, setUseMyLocation, setLocation, setRefreshData) }/>
+                <Ionicons style={ styles.refreshCity } name="refresh" size={20} color="black" onPress={ () => props.refreshLocation(props.currentItem?.city, props.currentItem?.countryCode, useMyLocation, setUseMyLocation, setLocation, setRefreshData, localStorage) }/>
             </View>
             {
                cityOptionList.length >= 1 &&

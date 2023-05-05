@@ -1,26 +1,46 @@
 // Dependencies
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ActivityIndicator, Screen, StyleSheet, Text, View, Image, Button } from 'react-native';
-import { useEffect, useContext, useState } from 'react';
+import { ActivityIndicator, StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
+import { useContext, useState } from 'react';
 import { AppStateContext } from '../AppState';
 import AutoCompleteInputCountry from "./AutoCompleteInputCountry";
 import AutoCompleteInputCity from './AutoCompleteInputCity';
 import cityJson from "../cities.json";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import getUnicodeFlagIcon from 'country-flag-icons/unicode';
+
+
 
 // Icons
 import { FontAwesome } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
+import { ScrollView } from 'react-native-gesture-handler';
 
+
+
+const setStoreLocations = async location => {
+  try {
+    await AsyncStorage.setItem("raincheck__locations", JSON.stringify(location));
+  } catch (error) { console.log(error); }
+};
+
+
+
+const getStoreLocations = async () => {
+  try {
+    return await AsyncStorage.getItem("raincheck__locations");
+  } catch (error) { console.log(error); }
+};
 
 
 
 export default function SettingsScreen({ navigation }) {
-    const { isLoading, data, locationName, location, setRefreshData, isMetric, setMetric, useMyLocation, setUseMyLocation } = useContext(AppStateContext);
+    const { isLoading, data, locationName, setRefreshData, isMetric, setMetric, setLocation, useMyLocation, setUseMyLocation, localStorage } = useContext(AppStateContext);
     console.log("SETTINGS RENDER");
-    console.log("location", location)
     const [country, setCountry] = useState(locationName.country);
     const [countryCode, setCountryCode] = useState(locationName.countryCode);
     const [city, setCity] = useState(locationName.city);
+    
 
     return  isLoading ? (
       <View style={ styles.app_loading }>
@@ -58,7 +78,7 @@ export default function SettingsScreen({ navigation }) {
         {/* Manually Set Location */}
         <View style={ styles.inputField }>
           <Text style={{ color: "#ccc", fontWeight:"bold", paddingBottom: 10 }}>Custom Location</Text>
-          <View style={ styles.metricOption }>
+          <View style={ [styles.metricOption, { marginBottom: 20 }] }>
             <View style={ styles.checkBox }>
               { useMyLocation && <Feather name="check" style={ styles.checkSign } /> }
             </View>
@@ -90,6 +110,26 @@ export default function SettingsScreen({ navigation }) {
                 refreshLocation={ refreshLocation }
               />
           </View>
+        </View>
+
+        {/* Save Locations */}
+        <View style={ styles.savedLocations }>
+          <Text style={{ color: "#aaa", fontWeight:"bold" }}>Recently Searched Locations</Text>
+          <ScrollView style={ styles.locationList }>
+          { JSON.parse(JSON.parse(localStorage)).map(savedLocation => {
+            return (
+              <View style={ styles.savedLocationItem }>
+                <TouchableWithoutFeedback onPress={ () => loadSavedLocation(savedLocation, useMyLocation, setLocation, setRefreshData) }>
+                  <View style={ styles.savedLocationInfo }>
+                    <Text style={{ fontSize: 16, paddingRight: 10 }}>{ getUnicodeFlagIcon(savedLocation.countryCode) }</Text>
+                    <Text style={{ fontSize: 16, color: "#eee", fontWeight: "bold" }}>{ savedLocation.countryCode + ", " + savedLocation.city }</Text>
+                  </View>
+                </TouchableWithoutFeedback>
+                <Feather name="delete" size={16} color="#999" onPress={ () => deleteSavedLocation(savedLocation, localStorage, setRefreshData) }/>
+              </View>
+            )
+          }) }
+          </ScrollView>
         </View>
 
         {/* Refresh App */}
@@ -207,6 +247,41 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
   },
+  savedLocations: {
+    padding: 10,
+    marginTop: 20,
+    width: "95%",
+    maxHeight: 200,
+    height: 200,
+    borderRadius: 10,
+    backgroundColor: "#111",
+    borderColor: "#222",
+    borderWidth: 1,
+  },
+  locationList: {
+    marginTop: 10,
+    width: "100%",
+    height: "100%",
+    paddingHorizontal: 10,
+    backgroundColor: "#050505",
+    borderColor: "#222",
+    borderWidth: 1,
+  },
+  savedLocationItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+    width: "100%",
+    height: 40,
+    borderColor: "#222",
+    borderBottomWidth: 1,
+  },
+  savedLocationInfo: {
+    width: "90%",
+    height: 40,
+    flexDirection: "row",
+    alignItems: "center"
+  }
 });
 
 
@@ -218,11 +293,41 @@ function getCityList(country) {
 
 
 
-function refreshLocation(city, countryCode, useMyLocation, setUseMyLocation, setLocation, setRefreshData) {
+async function refreshLocation(city, countryCode, useMyLocation, setUseMyLocation, setLocation, setRefreshData, localStorage) {
   const newLocation = cityJson.filter(location => location.name === city && location.country === countryCode);
   if (newLocation) {
     if (useMyLocation) setUseMyLocation(false);
-    console.log("New Location", newLocation);
+    const location = {
+      latitude: newLocation[0].lat,
+      longitude: newLocation[0].lng
+    }
+
+    // Store Element in Async Storage
+    const storageElement = {
+      countryCode: countryCode,
+      city: city,
+      latitude: newLocation[0].lat,
+      longitude: newLocation[0].lng
+    }
+    
+    const exist = JSON.parse(JSON.parse(localStorage)).find(el => JSON.stringify(el) === JSON.stringify(storageElement));
+    if (!exist) {
+      const newStore = JSON.parse(JSON.parse(localStorage));
+      newStore.push(storageElement);
+      setStoreLocations(JSON.stringify(newStore));
+    }
+    setLocation(location);
+    setRefreshData(true);
+  }
+}
+
+
+
+function loadSavedLocation(savedLocation, useMyLocation, setLocation, setRefreshData) {
+  console.log(savedLocation);
+  const newLocation = cityJson.filter(location => location.name === savedLocation.city && location.country === savedLocation.countryCode);
+  if (newLocation) {
+    if (useMyLocation) setUseMyLocation(false);
     const location = {
       latitude: newLocation[0].lat,
       longitude: newLocation[0].lng
@@ -230,6 +335,14 @@ function refreshLocation(city, countryCode, useMyLocation, setUseMyLocation, set
     setLocation(location);
     setRefreshData(true);
   }
+}
+
+
+function deleteSavedLocation(location, localStorage, setRefreshData) {
+  console.log("DELETE")
+  const newStorage = JSON.parse(JSON.parse(localStorage)).filter(el => JSON.stringify(el) !== JSON.stringify(location));
+  setStoreLocations(JSON.stringify(newStorage));
+  setRefreshData(true);
 }
 
 
