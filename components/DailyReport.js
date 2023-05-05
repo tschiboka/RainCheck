@@ -93,8 +93,8 @@ function getFormattedDate(dateUnix) {
 
 
 function getTotalRain(data) {
-    const rain = data.map(r => r.rain? r.rain["3h"] : 0).reduce((a, b) => a + b);
-    return rain;
+    const rain = data.map(r => r.rain ? r.rain["3h"] : 0).reduce((a, b) => a + b);
+    return Math.round(rain * 10) / 10;
 }
 
 

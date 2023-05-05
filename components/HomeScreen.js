@@ -85,13 +85,18 @@ const winter_night_mist = require("../assets/backgrounds/winter_night_mist.png")
 
 export default function HomeScreen({ route, navigation }) {
     const [ alertMessageOpen, setAlertMessageOpen ] = useState(false);
-    const { isLoading, setIsLoading, data, setData, location, setLocation, locationName, setLocationName, isAlertRead, setIsAlertRead } = useContext(AppStateContext);
+    const { isLoading, setIsLoading, data, setData, location, setLocation, locationName, setLocationName, isAlertRead, setIsAlertRead, locationAllowed } = useContext(AppStateContext);
     
     return  isLoading ? (
         <View style={ styles.app_loading }>
           <ActivityIndicator size="large" color="white" />
         </View>
-    ) : data.list ? (
+      ) : !locationAllowed ? (
+        <View style={ styles.app_loading }>
+          <EvilIcons name="location" size={ 56 } color="#555" style={{ marginBottom: 20 }}/>
+          <Text>Location is switched off on your device!</Text>
+        </View>
+      ) : data.list ? (
       (alertMessageOpen && !isAlertRead)
       ? <View style = { styles.alertMessageContainer }>
           <Text style={ styles.alertTitle}>Alert</Text>
