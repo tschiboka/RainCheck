@@ -1,5 +1,7 @@
 import React from 'react';
+import { AppStateContext } from '../AppState';
 import { View, StyleSheet, Text, Image } from "react-native";
+import { useEffect, useContext, useState } from 'react';
 import { Feather } from '@expo/vector-icons';
 
 
@@ -54,6 +56,7 @@ function getWeatherIcon(icon) {
 
 
 export default function HourlyThumbnail(props) {
+  const { isMetric } = useContext(AppStateContext);
     return (
       <View style = { props.current ? styles.weather_now : styles.weather_next_hours }>
         <View style = { styles.weatherTop }>
@@ -81,7 +84,10 @@ export default function HourlyThumbnail(props) {
             <Text style={{ 
                 fontSize: 18,
                 fontWeight: props.current ? "bold" : "normal", color: props.current ? "#ddd" : "#aaa"}}>
-                { (Math.round(Number(props.data.main.temp * 10)) / 10).toFixed(1) }
+                { isMetric 
+                  ? (Math.round(Number(props.data.main.temp * 10)) / 10).toFixed(1) 
+                  : getFahrenheit(props.data.main.temp)
+                }
             </Text>
         </View>
       </View>
@@ -172,3 +178,7 @@ const styles = StyleSheet.create({
         borderColor: "#0a0a0a"
       }
 });
+
+
+
+const getFahrenheit = celsius => Math.round(Number(celsius) * 1.8 + 32);

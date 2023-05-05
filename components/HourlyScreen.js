@@ -36,7 +36,7 @@ function getIcon(icon) {
 }
 
 export default function HourlyScreen({ navigation }) {
-    const { isLoading, setIsLoading, data, setData, location, setLocation, locationName, setLocationName } = useContext(AppStateContext);
+    const { isLoading, data, isMetric } = useContext(AppStateContext);
     console.log("HOURLY SCREEN RENDER");
     return  isLoading ? (
       <View style={ styles.app_loading }>
@@ -57,15 +57,15 @@ export default function HourlyScreen({ navigation }) {
               <Image source={ getWeatherIcon(data.list[0].weather[0].icon) } style={ styles.currentIcon }></Image>
             </View>
             <View style={ [styles.currentContainerCell, {  width: "18%" }] }>
-              <Text style={{ color: "white", fontWeight: "bold" }}>{ Math.round(Number(data.list[0].main.temp_min * 10)) / 10 } C</Text>
+              <Text style={{ color: "white", fontWeight: "bold" }}>{ isMetric ? Math.round(Number(data.list[0].main.temp_min * 10)) / 10 + " C": getFahrenheit(data.list[0].main.temp_min) + " F"}</Text>
               <Text style={{ color: "#ddd" }}>Min</Text>
             </View>
             <View style={ [styles.currentContainerCell, {  width: "18%" }] }>
-            <Text style={{ color: "white", fontWeight: "bold" }}>{ Math.round(Number(data.list[0].main.temp_max * 10)) / 10 } C</Text>
+            <Text style={{ color: "white", fontWeight: "bold" }}>{ isMetric ? Math.round(Number(data.list[0].main.temp_max * 10)) / 10 + " C" : getFahrenheit(data.list[0].main.temp_max) + " F"}</Text>
               <Text style={{ color: "#ddd" }}>Max</Text>
             </View>
             <View style={ [styles.currentContainerCell, {  width: "18%" }] }>
-            <Text style={{ color: "white", fontWeight: "bold" }}>{ Math.round(Number(data.list[0].main.feels_like * 10)) / 10 } C</Text>
+            <Text style={{ color: "white", fontWeight: "bold" }}>{ isMetric ? Math.round(Number(data.list[0].main.feels_like * 10)) / 10 + " C" : getFahrenheit(data.list[0].main.feels_like) + " F" }</Text>
               <Text  style={{ color: "#ddd" }}>Feel</Text>
             </View>
           </View>
@@ -121,7 +121,7 @@ export default function HourlyScreen({ navigation }) {
         <View style={ styles.hourlyListContainerOuter  }>
           <ScrollView style={ styles.scroll }>
             <View style={ styles.hourlyListContainer }>
-              { getListItems(data) }
+              { getListItems(data, isMetric) }
             </View>
           </ScrollView>
         </View>
@@ -136,7 +136,7 @@ export default function HourlyScreen({ navigation }) {
 
 
 
-function getListItems(data) {
+function getListItems(data, isMetric) {
   const { lowestWeeklyTemp, highestWeeklyTemp } = { ...getTemperatureExtremes(data) };
   return data.list.map((item, index) => 
   <View style={ styles.hourlyItem } key={`hourlyListItem_${ index }`}>
@@ -157,7 +157,7 @@ function getListItems(data) {
         </View>
       </View>
       <View style={ styles.listTempContainer }>
-      <Text style={{ fontWeight: "bold", color: "#ddd" }}>{ Math.round(Number(item.main.temp * 10)) / 10 } C</Text>
+      <Text style={{ fontWeight: "bold", color: "#ddd" }}>{ isMetric ? Math.round(Number(item.main.temp * 10)) / 10 + " C" : getFahrenheit(item.main.temp) + " F"}</Text>
       </View>
     </View>
   )
@@ -469,3 +469,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white"
   }
 });
+
+
+
+const getFahrenheit = celsius => Math.round(Number(celsius) * 1.8 + 32);

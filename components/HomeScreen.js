@@ -85,7 +85,7 @@ const winter_night_mist = require("../assets/backgrounds/winter_night_mist.png")
 
 export default function HomeScreen({ route, navigation }) {
     const [ alertMessageOpen, setAlertMessageOpen ] = useState(false);
-    const { isLoading, setIsLoading, data, setData, location, setLocation, locationName, setLocationName, isAlertRead, setIsAlertRead, locationAllowed } = useContext(AppStateContext);
+    const { isLoading, setIsLoading, data, setData, location, setLocation, locationName, setLocationName, isMetric, isAlertRead, setIsAlertRead, locationAllowed } = useContext(AppStateContext);
     
     return  isLoading ? (
         <View style={ styles.app_loading }>
@@ -154,8 +154,12 @@ export default function HomeScreen({ route, navigation }) {
                      { locationName.location }, { locationName.city }, { locationName.country }
                 </Text>
                 <View style={ styles.mainTempBox }>
-                    <Text style={ styles.mainTempText }>{ (Math.round(Number(data.list[0].main.temp * 10)) / 10).toFixed(1) }</Text>
-                    <Text style={ styles.mainTempMeasurement }>C</Text>
+                    <Text style={ styles.mainTempText }>{ 
+                      isMetric 
+                        ? (Math.round(Number(data.list[0].main.temp * 10)) / 10).toFixed(1)
+                        : getFahrenheit(data.list[0].main.temp)
+                      }</Text>
+                    <Text style={ styles.mainTempMeasurement }>{ isMetric ? "C" : "F"}</Text>
                 </View>
                 </ImageBackground>
            </View>
@@ -529,3 +533,6 @@ function showAlert(setIsAlertRead, setAlertMessageOpen, alertMessageOpen) {
   setAlertMessageOpen(true);
  // setIsAlertRead(true);
 }
+
+
+const getFahrenheit = celsius => Math.round(Number(celsius) * 1.8 + 32);

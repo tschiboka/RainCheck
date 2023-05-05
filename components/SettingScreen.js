@@ -287,7 +287,6 @@ const styles = StyleSheet.create({
 
 
 function getCityList(country) {
-  console.log("Get Cities for Country", country)
   return cityJson.filter(c => c.country === country).map(location => location.name).sort();
 }
 
@@ -324,7 +323,6 @@ async function refreshLocation(city, countryCode, useMyLocation, setUseMyLocatio
 
 
 function loadSavedLocation(savedLocation, useMyLocation, setLocation, setRefreshData) {
-  console.log(savedLocation);
   const newLocation = cityJson.filter(location => location.name === savedLocation.city && location.country === savedLocation.countryCode);
   if (newLocation) {
     if (useMyLocation) setUseMyLocation(false);
@@ -339,7 +337,6 @@ function loadSavedLocation(savedLocation, useMyLocation, setLocation, setRefresh
 
 
 function deleteSavedLocation(location, localStorage, setRefreshData) {
-  console.log("DELETE")
   const newStorage = JSON.parse(JSON.parse(localStorage)).filter(el => JSON.stringify(el) !== JSON.stringify(location));
   setStoreLocations(JSON.stringify(newStorage));
   setRefreshData(true);

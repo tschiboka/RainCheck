@@ -11,7 +11,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import  DailyReport  from "./DailyReport";
 
 export default function DailyScreen({ navigation }) {
-    const { isLoading, setIsLoading, data, setData, location, setLocation, locationName, setLocationName } = useContext(AppStateContext);
+    const { isLoading, data, isMetric } = useContext(AppStateContext);
     const { lowestWeeklyTemp, highestWeeklyTemp } = { ...getTemperatureExtremes(data) };
     console.log("DAILY SCREEN RENDER")
     const sortedByDay = sortByDay(data);
@@ -37,6 +37,7 @@ export default function DailyScreen({ navigation }) {
                 dayData={ sortedByDay[day] } 
                 lowestWeeklyTemp={ lowestWeeklyTemp }
                 highestWeeklyTemp={ highestWeeklyTemp }
+                isMetric={ isMetric }
                 />
               : "")
             }

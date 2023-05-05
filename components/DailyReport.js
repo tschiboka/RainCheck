@@ -26,6 +26,7 @@ const icon_11 = require("../assets/weather_icons/11.png");
 
 export default function DailyScreen(props) {
     const dayData = props.dayData;
+    const isMetric = props.isMetric;
     const dataPoints = getHourlyDataList(dayData);
     const { highestDailyTemp, lowestDailyTemp, avgDailyTemp } = getDailyTempSummary(dayData);
     return (
@@ -55,21 +56,21 @@ export default function DailyScreen(props) {
             <View style={ styles.body }>
                 <View style={ styles.chartContainer }>
                     {
-                        Object.keys(dataPoints).map((key, index) => createDataPoint(dataPoints[key], index, props.lowestWeeklyTemp, props.highestWeeklyTemp), props.name)
+                        Object.keys(dataPoints).map((key, index) => createDataPoint(dataPoints[key], index, props.lowestWeeklyTemp, props.highestWeeklyTemp), props.name, isMetric)
                     }
                 </View>
                 <View style={ styles.chartExplanation }>
                     <View style={ styles.explanation }>
                         <FontAwesome5 name="temperature-low" size={16} color="#aaa" />
-                        <Text style={{ color: "#777" }}>{ highestDailyTemp }</Text>
+                        <Text style={{ color: "#777" }}>{ isMetric ? highestDailyTemp : getFahrenheit(highestDailyTemp) }</Text>
                     </View>
                     <View style={ styles.explanation }>
                         <Feather name="sun" size={16} color="#aaa" />
-                        <Text style={{ color: "#777" }}>{ avgDailyTemp }</Text>
+                        <Text style={{ color: "#777" }}>{ isMetric ? avgDailyTemp : getFahrenheit(avgDailyTemp) }</Text>
                     </View>
                     <View style={ styles.explanation }>
                         <FontAwesome5 name="moon" size={16} color="#aaa" />
-                        <Text style={{ color: "#777" }}>{ lowestDailyTemp }</Text>
+                        <Text style={{ color: "#777" }}>{ isMetric ? lowestDailyTemp : getFahrenheit(lowestDailyTemp) }</Text>
                     </View>
                 </View>
             </View>
@@ -153,7 +154,7 @@ function getHourlyDataList(data) {
 
 
 
-function createDataPoint(data, index, lowestWeeklyTemp, highestWeeklyTemp, name) {
+function createDataPoint(data, index, lowestWeeklyTemp, highestWeeklyTemp, name, isMetric) {
     if (!data) return (
         <View style={ styles.dataPoint } key={ "datapoint" + name + index }>
             <View style={ styles.weatherIcon }></View>
@@ -177,7 +178,7 @@ function createDataPoint(data, index, lowestWeeklyTemp, highestWeeklyTemp, name)
             <View style={ styles.bar }>
                 <View style={ [ styles.thumb, { backgroundColor, height: avgPc + "%" } ] }></View>
             </View>
-            <View style={ styles.temperature }><Text style={{ color: "#999" }}>{ Math.round(data.main.temp * 10) / 10 }</Text></View>
+            <View style={ styles.temperature }><Text style={{ color: "#999" }}>{ isMetric ? Math.round(data.main.temp * 10) / 10 : getFahrenheit(data.main.temp) }</Text></View>
         </View>
     );
 }
@@ -216,6 +217,9 @@ function getDailyTempSummary(data) {
     
     return { highestDailyTemp, lowestDailyTemp, avgDailyTemp }
 }
+
+
+const getFahrenheit = celsius => Math.round(Number(celsius) * 1.8 + 32);
 
 
 
